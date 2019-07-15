@@ -1,0 +1,55 @@
+import matplotlib.pyplot as plt
+import random
+from math import exp, log, sin
+
+
+gamma = 2
+k = 1
+t0 = 14
+tf = 28
+
+drug_dosage_at_times = [1.6 * gamma * random.random() for _ in range(tf)]
+
+#adjuvanet case surgey before therpay
+
+def u(t, N1):
+    return N1 * drug_dosage_at_times[t]
+def dn1dt(n1):
+    return gamma * n1
+
+def dN1dt(t, N1):
+    return gamma * N1 - u(t, N1)
+
+n1 = 1
+history_of_n1 = []
+for _ in range(t0):
+    n1 += dn1dt(n1)
+    history_of_n1.append(n1)
+
+N1 = n1 * exp(-k)
+history_of_N1 = []
+for t in range(t0, tf):
+    N1 += dN1dt(t, N1)
+history_of_N1.append(N1)
+
+#Neoadjuvant case surgery before 
+    def dn2dt(n2):
+    return gamma * n2
+
+def dN2dt(t, N2):
+    return gamma * N2 - u(t, N2)
+
+n2 = 1
+history_of_n2 = []
+for _ in range(t0):
+    n2 += dn2dt(n2)
+    history_of_n2.append(n2)
+
+N2 = n2
+history_of_N2 = []
+for t in range(t0, tf-1):
+    N2 += dN1dt(t, N2)
+    history_of_N2.append(N2)
+
+N2 *= exp(-k)
+history_of_N2.append(N2)
